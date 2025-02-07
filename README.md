@@ -1,5 +1,5 @@
 
 # Comparison with Other Browser Storage Options
-| Feature | IndexedDB     | localStorage                | sessionStorage | Cookies |
-| :-------- | :------- | :------------------------- |
+| Feature            | IndexedDB                | localStorage    | sessionStorage  | Cookies           |
+| :----------------- | :----------------------- | :---------------| :-------------- | :---------------- |
 | `Storage Capacity` | `Large (hundreds of MB)` | Small (5-10 MB) | Small (5-10 MB) | Very Small (4 KB) |
