@@ -1,30 +1,30 @@
-import React from "react";
-import db, {studentsTable } from "../db/db"; // Import the typed table
+import React, { useState } from "react";
+import db, { studentsTable } from "../db/db";
 import { useLiveQuery } from "dexie-react-hooks";
 
-// Define the structure of a Student
 interface Student {
-  id?: number; // Optional because it's auto-incremented by Dexie
+  id?: number;
   name: string;
   age: number;
 }
 
 const StudentList: React.FC = () => {
-  // Fetch students using useLiveQuery with proper typing
   const students = useLiveQuery(() => studentsTable.toArray());
+  const [editingStudent, setEditingStudent] = useState<Student | null>(null);
 
-  // Function to update a student
-  const updateStudent = async (data: Student) => {
-    try {
-      await studentsTable.put({ id: data.id, name: "your name 😂😂", age: 20 });
-      alert("Updated your database with static data");
-    } catch (error) {
-      console.error("Failed to update student:", error);
-      alert("Failed to update student");
+  const updateStudent = async () => {
+    if (editingStudent) {
+      try {
+        await studentsTable.put(editingStudent);
+        alert("Updated student successfully");
+        setEditingStudent(null);
+      } catch (error) {
+        console.error("Failed to update student:", error);
+        alert("Failed to update student");
+      }
     }
   };
 
-  // Function to clear the entire database
   const clearAll = async () => {
     try {
       await db.delete();
@@ -35,18 +35,68 @@ const StudentList: React.FC = () => {
     }
   };
 
+  const handleDelete = async (student: Student) => {
+    try {
+      if (student.id !== undefined) {
+        await studentsTable.delete(student.id); // Delete from IndexedDB
+        console.log(`Deleted student with ID: ${student.id}`);
+      } else {
+        console.warn("Student ID is undefined, cannot delete.");
+      }
+    } catch (error) {
+      console.error("Failed to delete student:", error);
+      alert("Failed to delete student");
+    }
+  };
+
   return (
-    <ul>
-      <button disabled={students?.length === 0} onClick={clearAll}>
+    <div>
+      <button disabled={!students?.length} onClick={clearAll}>
         Delete Database
       </button>
-      {students?.map((student) => (
-        <li key={student.id}>
-          {student.name} {student.age}
-          <button onClick={() => updateStudent(student)}>Edit {student.id}</button>
-        </li>
-      ))}
-    </ul>
+      <ul>
+        {students?.map((student) => {
+          return (
+            <li key={student.id}>
+              {editingStudent?.id === student.id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editingStudent?.name}
+                    onChange={(e) =>
+                      setEditingStudent((prev) => ({
+                        ...prev!,
+                        name: e.target.value || "", // Ensure an empty string instead of undefined
+                      }))
+                    }
+                  />
+                  <input
+                    type="number"
+                    value={editingStudent?.age}
+                    onChange={(e) =>
+                      setEditingStudent((prev) => ({
+                        ...prev!,
+                        age: Number(e.target.value),
+                      }))
+                    }
+                  />
+                  <button onClick={updateStudent}>Save</button>
+                  <button onClick={() => setEditingStudent(null)}>Cancel</button>
+                </>
+              ) : (
+                <>
+                  {student.name} ({student.age})
+                  <button onClick={() => setEditingStudent(student)}>Edit</button>
+                  <button onClick={() => handleDelete(student)}>Delete</button>
+                </>
+              )}
+            </li>
+          )
+        }
+
+        )}
+      </ul>
+    </div>
   );
 };
 

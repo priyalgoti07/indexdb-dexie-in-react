@@ -157,7 +157,7 @@ Dexie.js is a JavaScript library that provides a higher-level, easier-to-use API
 1) **Createtion** of react web app : you have to hit the command to create react web app here indexdb_dexie_tutorial is your react web app name you can choose any name here 
 
 ```bash
- yarn create vite indexdb-dexie-in-react
+  yarn create vite indexdb-dexie-in-react
   cd indexdb-dexie-in-react
 ```
 
@@ -165,7 +165,7 @@ Dexie.js is a JavaScript library that provides a higher-level, easier-to-use API
 
 if you ‘re using yarn then you can follow first command
 ```bash
- yarn add dexie 
+  yarn add dexie 
   yarn add dexie-react-hooks
 ```
 it is provide various kinds of hooks with help we can perform all kinds of operation related to index DB or index data base.
